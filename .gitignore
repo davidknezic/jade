@@ -7,3 +7,6 @@ lib-cov
 coverage
 npm-debug.log
 /test/output
+/test/temp
+/docs/out
+.release.json

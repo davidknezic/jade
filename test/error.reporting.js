@@ -85,6 +85,28 @@ describe('error reporting', function () {
         assert(/foo\(/.test(err.message))
       });
     });
+    describe('Unexpected character', function () {
+      it('includes details of where the error was thrown', function () {
+        var err = getError('ul?', {});
+        assert(err.message.indexOf('unexpected text ?') !== -1);
+      });
+    });
+    describe('Include filtered', function () {
+      it('includes details of where the error was thrown', function () {
+        var err = getError('include:js()!', {});
+        assert(err.message.indexOf('expected space after include:filter but got "!"') !== -1);
+        var err = getError('include:js ', {});
+        assert(err.message.indexOf('missing path for include:filter') !== -1);
+      });
+    });
+    describe('mixin block followed by a lot of blank lines', function () {
+      it('reports the correct line number', function () {
+        var err = getError('mixin test\n    block\n\ndiv()Test');
+        var line = /Jade\:(\d+)/.exec(err.message);
+        assert(line, 'Line number must be included in error message');
+        assert(line[1] === '4', 'The error should be reported on line 4, not line ' + line[1]);
+      });
+    });
   });
   describe('runtime errors', function () {
     describe('with no filename and `compileDebug` left undefined', function () {
